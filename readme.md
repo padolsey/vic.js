@@ -79,6 +79,45 @@ getAndPadNumbers('test 123 for this 5 thi7ng 83'); // => ['123', '005', '007', '
 getAndPadNumbers(' 1 2 __ 3 lk'); // => ['001', '002', '003']
 ```
 
+A more advanced example using all of Vic's features validates dates in the form YYYY-MM-DD:
+
+```js
+var vicDate = vic(/^\s*(\d{1,4})[.\/,: -](\d{1,2})[.\/,: -](\d{1,2})\s*$/, {
+    1: function(year) {
+      // Year between 50 and 99 assumed to be '19YY', otherwise presumed after 2000
+      return vic.pad(year >= 50 && year <= 99 ? '1900' : '2000' )(year);
+    },
+    2: function(month) {
+      return month >= 1 && month <= 12 && vic.pad('00')(month);
+    },
+    3: function(day, i, all) {
+      // Check that there are {day} amount of days in the entered month:
+      return day > 0 &&
+        day <= new Date(all[1], all[2], 0).getDate() &&
+        vic.pad('00')(day);
+    }
+}, function(v) {
+  return v.join('-');
+});
+
+vicDate('111');       // => false
+vicDate('2/3/4/5');   // => false
+vicDate('16.332.2');  // => false
+vicDate('20  1  20'); // => false
+vicDate(' 1999.7.0'); // => false
+vicDate('1999.0.1');  // => false
+
+vicDate('1999.9.32'); // => false (no 32 in Sept)
+vicDate('1999.2.28'); // => '1999-02-28'
+vicDate('1999.2.31'); // => false (no 31 in Feb)
+
+vicDate('1.1.1');     // => '2001-01-01'
+vicDate('1956.3.2');  // => '1956-03-02'
+vicDate('16.03-2');   // => '2016-03-02'
+vicDate(' 20 1 20 '); // => '2020-01-20'
+vicDate('1999.7.31'); // => '1999-07-31'
+```
+
 ## Name
 
 *VIC* stands for *Validation & Input Correction*
