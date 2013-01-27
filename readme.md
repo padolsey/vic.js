@@ -4,7 +4,7 @@
 
 A [ux.stackexchange question](http://ux.stackexchange.com/q/33564/6264) prompted me to consider the lack of permissive validation+correction abstractions available in JavaScript. vic.js is the result of my exploration of various ways to present such an abstraction with an API that allows flexibility and, hopefully, simplicity. 
 
-See the related blog post: [Permissive user input validation](http://james.padolsey.com/).
+See the related blog post: [Permissive user input validation](http://james.padolsey.com/javascript/permissive-user-input-validation/).
 
 It's small, simple and tested.
 
