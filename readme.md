@@ -8,6 +8,8 @@ See the related blog post: [Permissive user input validation](http://james.padol
 
 It's small, simple and tested.
 
+[See a small demo](http://padolsey.github.com/vic.js/demos/)
+
 ## Usage
 
 ```js
