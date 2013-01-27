@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>vic examples</title>
+	<style>
+		body {
+			font: 1em sans-serif;
+		}
+		h1 {
+			font-size: 1.2em;
+		}
+		input {
+			font-size: inherit;
+		}
+		span {
+			color: green;
+			font-weight: 700;
+			padding-left: 1em;
+		}
+		span.invalid {
+			color: red;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>vic - demo - try entering data!</h1>
+
+	<p><a href="http://github.com/padolsey/vic.js">github.com/padolsey/vic</a></p>
+	<hr/>
+
+	<script src="../src/vic.js"></script>
+
+	<script>
+
+	(function() {
+
+		var doc = document;
+
+		var examples = [
+			{
+				name: 'IP Number',
+				matcher: vic(/^\s*(\d{1,3})[ .,:](\d{1,3})[ .,:](\d{1,3})[ .,:](\d{1,3})\s*$/, function(n) {
+					return +n >= 0 && +n < 256 && vic.pad('000')(n);
+				}, function(v) {
+				  return v.join('.'); // custom separator
+				})
+			},
+			{
+				name: 'Date YYYY-MM-DD',
+				matcher: vic(/^\s*(\d{1,4})[.\/,: -](\d{1,2})[.\/,: -](\d{1,2})\s*$/, {
+				    1: function(year) {
+				    	return vic.pad(year >= 50 && year <= 99 ? '1900' : '2000' )(year);
+				    },
+				    2: function(month) {
+				    	return month >= 1 && month <= 12 && vic.pad('00')(month);
+				    },
+				    3: function(day, i, all) {
+				    	return day > 0 && day <= new Date(all[1], all[2], 0).getDate() && vic.pad('00')(day);
+				    }
+				}, function(v) {
+				  return v.join('-');
+				})
+			},
+			{
+				name: 'Number extractor & padder',
+				matcher: vic(/\d+/g, vic.pad('000'), vic.join(','))
+			},
+			{
+				name: '[a-Z] only + corrected spacing',
+				matcher: vic(/(\S+)/g,  function(v) {
+					return v.replace(/[^a-zA-Z]+/g, '');
+				}, function(v) {
+					return v.join(' ');
+				})
+			}
+		];
+
+		for (var i = 0, l = examples.length; i < l; ++i) (function(ex) {
+			var h1 = doc.body.appendChild(doc.createElement('h1'));
+			h1.innerHTML = ex.name;
+			var input = doc.body.appendChild(doc.createElement('input'));
+			var result = doc.body.appendChild(doc.createElement('span'));
+			input.onkeyup = input.onchange = function() {
+				if (!this.value) {
+					return;
+				}
+				var res = ex.matcher(this.value);
+				if (res) {
+					result.className = '';
+					result.innerHTML = 'Valid: We got: "' + res + '"';
+				} else {
+					result.className = 'invalid';
+					result.innerHTML = 'Invalid';
+				}
+			};
+		}(examples[i]));
+
+	}());
+
+	</script>
+
+</body>
+</html>
